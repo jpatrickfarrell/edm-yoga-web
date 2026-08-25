@@ -337,15 +337,58 @@ footer{
 }
 
 /* ---------- mobile nav toggle ---------- */
-.nav-toggle{ display:none; background:none; border:none; color:var(--cream); font-size:1.4rem; cursor:pointer; }
+.nav-toggle{
+  display:none; background:none; border:none; color:var(--cream);
+  font-size:1.4rem; line-height:1; cursor:pointer;
+  /* 44px tap target without growing the header */
+  min-width:44px; min-height:44px; padding: 11px; margin: -11px -11px -11px 0;
+}
 @media (max-width: 780px){
   .nav-toggle{ display:block; }
+
+  /* NOTE: header.site-nav uses backdrop-filter, which makes it the containing
+     block for fixed-position descendants. The panel is therefore positioned
+     absolutely against the header itself — top:100% keeps it flush under the
+     bar at whatever height the bar happens to be. */
   .nav-links{
-    position:fixed; inset: 66px 0 0 0; background: var(--ink);
-    flex-direction:column; align-items:flex-start; padding: 30px 28px;
-    display:none; gap: 22px; font-size: 1rem; overflow-y:auto;
+    display:none;
+    position:absolute; top:100%; left:0; right:0;
+    flex-direction:column; flex-wrap:nowrap; align-items:stretch;
+    gap:0;
+    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+    background: var(--ink);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 18px 40px rgba(var(--cream-rgb), 0.10);
+    max-height: calc(100dvh - 100%);
+    overflow-y:auto; -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    font-size: 1rem;
   }
   .nav-links.open{ display:flex; }
+
+  .nav-links a{
+    display:flex; align-items:center;
+    min-height: 52px;
+    padding: 6px 28px;
+    border-bottom: none;
+    border-left: 3px solid transparent;
+  }
+  .nav-links a + a{ border-top: 1px solid var(--line); }
+  .nav-links a:hover,
+  .nav-links a.active{
+    color: var(--cream);
+    border-bottom: none;
+    /* the desktop rule sets border-color as a shorthand (all four sides);
+       keep the row divider neutral and let only the left bar go pink */
+    border-top-color: var(--line);
+    border-left-color: var(--gold);
+    background: var(--surface-2);
+  }
+  .nav-links a.ext{ color: var(--gold); }
+  .nav-links a.ext:hover{ border-left-color: var(--gold); }
+
+  /* stop the page behind the panel from scrolling while it is open */
+  body.nav-open{ overflow: hidden; }
 }
 
 /* ---------- section label pair (title + copy) ---------- */
